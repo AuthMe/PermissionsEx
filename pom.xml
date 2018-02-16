@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.tehkode</groupId>
     <artifactId>PermissionsEx</artifactId>
@@ -6,7 +7,6 @@
     <name>PermissionsEx</name>
     <url>https://github.com/PEXPlugins/PermissionsEx</url>
     <properties>
-        <netbeans.hint.license>gpl2</netbeans.hint.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <issueManagement>
@@ -25,11 +25,10 @@
         <developerConnection>scm:git:ssh://git@github.com/PEXPlugins/PermissionsEx.git</developerConnection>
         <url>https://github.com/PEXPlugins/PermissionsEx.git</url>
     </scm>
-
     <build>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -37,112 +36,104 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
             </plugin>
-          <plugin>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>shade</goal>
-                </goals>
-                <phase>package</phase>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.gravitydevelopment.updater</pattern>
+                                    <shadedPattern>ru.tehkode.libs.net.gravitydevelopment.updater</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>ru.tehkode.libs.org.apache</shadedPattern>
+                                    <excludes>
+                                        <exclude>org.apache.commons.lang.*</exclude>
+                                    </excludes>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.mojang</pattern>
+                                    <shadedPattern>ru.tehkode.libs.com.mojang</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>ru.tehkode.libs.com.google.gson</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jboss.seven2six</groupId>
+                <artifactId>seven2six</artifactId>
+                <version>1.1.Final</version>
+                <executions>
+                    <!-- run after "compile", lets your artifact work on 1.6 -->
+                    <execution>
+                        <id>weave</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                    </execution>
+                    <!-- run after "test-compile", lets you run your tests on 1.6 -->
+                    <execution>
+                        <id>weave-tests</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.16</version>
                 <configuration>
-                  <createDependencyReducedPom>false</createDependencyReducedPom>
-                  <relocations>
-                    <relocation>
-                      <pattern>net.gravitydevelopment.updater</pattern>
-                      <shadedPattern>ru.tehkode.libs.net.gravitydevelopment.updater</shadedPattern>
-                    </relocation>
-                    <relocation>
-                      <pattern>org.apache</pattern>
-                      <shadedPattern>ru.tehkode.libs.org.apache</shadedPattern>
-                      <excludes>
-                        <exclude>org.apache.commons.lang.*</exclude>
-                      </excludes>
-                    </relocation>
-                    <relocation>
-                      <pattern>com.mojang</pattern>
-                      <shadedPattern>ru.tehkode.libs.com.mojang</shadedPattern>
-                    </relocation>
-                    <relocation>
-                      <pattern>com.google.gson</pattern>
-                      <shadedPattern>ru.tehkode.libs.com.google.gson</shadedPattern>
-                    </relocation>
-                  </relocations>
+                    <ignores>
+                        <ignore>java.lang.Throwable</ignore>
+                    </ignores>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java16</artifactId>
+                        <version>1.1</version>
+                    </signature>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.jboss.seven2six</groupId>
-            <artifactId>seven2six</artifactId>
-            <version>1.1.Final</version>
-            <executions>
-              <!-- run after "compile", lets your artifact work on 1.6 -->
-              <execution>
-                <id>weave</id>
-                <phase>process-classes</phase>
-                <goals>
-                  <goal>transform</goal>
-                </goals>
-              </execution>
-              <!-- run after "test-compile", lets you run your tests on 1.6 -->
-              <execution>
-                <id>weave-tests</id>
-                <phase>process-test-classes</phase>
-                <goals>
-                  <goal>transform</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>animal-sniffer-maven-plugin</artifactId>
-            <version>1.11</version>
-            <configuration>
-              <ignores>
-                <ignore>java.lang.Throwable</ignore>
-              </ignores>
-              <signature>
-                <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java16</artifactId>
-                <version>1.0</version>
-              </signature>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-          </plugin>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.9</version>
-            <type>jar</type>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -150,28 +141,49 @@
             <artifactId>netevents</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.gravitydevelopment.updater</groupId>
             <artifactId>updater</artifactId>
-            <version>LATEST</version>
+            <version>2.4</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-      <dependency>
-        <groupId>com.mojang</groupId>
-        <artifactId>AccountsClient</artifactId>
-        <version>unspecified</version>
-      </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>AccountsClient</artifactId>
+            <version>unspecified</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -182,10 +194,10 @@
             <id>gravity-repo</id>
             <url>http://repo.gravitydevelopment.net</url>
         </repository>
-      <repository>
-        <id>spigot-repo</id>
-        <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
-      </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
+        </repository>
     </repositories>
     <profiles>
         <profile>
@@ -195,7 +207,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.2.1</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -208,7 +220,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
+                        <version>3.0.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -221,7 +233,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
