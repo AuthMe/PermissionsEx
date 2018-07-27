@@ -1,6 +1,5 @@
 package ru.tehkode.permissions.bukkit;
 
-import com.zachsthings.netevents.NetEventsPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,16 +15,14 @@ import ru.tehkode.permissions.exceptions.PermissionBackendException;
 * Listener for events from the NetEvents plugin
 */
 public class RemoteEventListener implements Listener {
-	private final NetEventsPlugin netEvents;
 	private final PermissionManager manager;
 
-	public RemoteEventListener(NetEventsPlugin netEvents, PermissionManager manager) {
-		this.netEvents = netEvents;
+	public RemoteEventListener(PermissionManager manager) {
 		this.manager = manager;
 	}
 
 	public boolean isLocal(PermissionEvent event) {
-		return netEvents == null || event.getSourceUUID().equals(netEvents.getServerUUID());
+		return true;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

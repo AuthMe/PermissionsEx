@@ -19,11 +19,10 @@
 package ru.tehkode.permissions.bukkit.commands;
 
 import com.google.common.collect.Iterables;
-import com.mojang.api.profiles.HttpProfileRepository;
 import com.mojang.api.profiles.Profile;
 import com.mojang.api.profiles.ProfileRepository;
+import com.mojang.api.profiles.minecraft.HttpProfileRepository;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -165,7 +164,7 @@ public class UtilityCommands extends PermissionsCommand {
 			sender.sendMessage(ChatColor.RED + "This server is running in offline mode and UUIDs may not be stable. Please run '/pex convert uuid force' to perform conversion anyway, or switch to online mode.");
 			return;
 		}
-		final ProfileRepository repo = new HttpProfileRepository("minecraft");
+		final ProfileRepository repo = new HttpProfileRepository();
 		final Collection<String> userIdentifiers = new HashSet<>(backend.getUserIdentifiers());
 		for (Iterator<String> it = userIdentifiers.iterator(); it.hasNext(); ) {
 			try {
@@ -192,7 +191,7 @@ public class UtilityCommands extends PermissionsCommand {
 				try {
 					for (Profile profile : repo.findProfilesByNames(names.toArray(new String[names.size()]))) {
 						PermissionsUserData data = backend.getUserData(profile.getName());
-						data.setIdentifier(profile.getId().replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
+						data.setIdentifier(profile.getId().toString().replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
 						data.setOption("name", profile.getName(), null);
 					}
 				} catch (Exception e) {
